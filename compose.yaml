@@ -1,0 +1,33 @@
+services:
+  redis:
+    container_name: redis
+    build:
+      context: ./redis
+    networks:
+      - redis-network
+
+  redis-insight:
+    container_name: redis-insight
+    build:
+      context: ./redis-insight
+    networks:
+      - redis-network
+    depends_on:
+      - redis
+
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/config/nginx.conf:/etc/nginx/nginx.conf
+    container_name: redis-nginx
+    restart: always
+    networks:
+      - redis-network
+    depends_on:
+      - redis
+
+networks:
+  redis-network:
+    driver: bridge
